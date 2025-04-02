@@ -101,6 +101,11 @@ body {
   outline: none;
   line-height: 1.6;
   white-space: pre-wrap;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Default shadow */
   border-radius: 0px;
+}
+
+/* Remove box-shadow when plain background is active */
+.container.plain-background .editor.a4 {
+  box-shadow: none; /* Remove shadow for continuous look */
 }
