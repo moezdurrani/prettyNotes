@@ -5,6 +5,7 @@ const App = () => {
   const [fontSize, setFontSize] = useState("16px");
   const [fontFamily, setFontFamily] = useState("Arial");
   const [color, setColor] = useState("#000000");
+  const [a4View, setA4View] = useState(true);
 
   const applyStyle = (command, value) => {
     document.execCommand(command, false, value);
@@ -14,7 +15,6 @@ const App = () => {
     <div className="container">
       <div className="toolbar">
         <h3>Style</h3>
-
         <label>Font:</label>
         <select
           value={fontFamily}
@@ -35,8 +35,6 @@ const App = () => {
           value={fontSize}
           onChange={(e) => {
             setFontSize(e.target.value);
-            // Use "fontSize" command with values 1–7 (HTML legacy sizes)
-            // We'll later map these to CSS font sizes
             const sizeMap = {
               "14px": 2,
               "16px": 3,
@@ -63,13 +61,20 @@ const App = () => {
         />
       </div>
 
-      <div
-        className="editor"
-        contentEditable
-        suppressContentEditableWarning
-        spellCheck={false}
-      >
-        Start typing your notes here...
+      <div className="editor-wrapper">
+        <div
+          className={`editor ${a4View ? "a4" : ""}`}
+          contentEditable
+          suppressContentEditableWarning
+          spellCheck={false}
+          style={{
+            fontSize,
+            fontFamily,
+            color,
+          }}
+        >
+          Start typing your notes here...
+        </div>
       </div>
     </div>
   );

@@ -4,12 +4,13 @@ body {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   background-color: #ffffff;
   color: #000000;
+  min-height: 100vh; /* Ensure body can grow with content */
 }
 
 .container {
   display: flex;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh; /* Minimum height of viewport, but can grow */
+  background-color: #e5e5e5;
 }
 
 .toolbar {
@@ -22,24 +23,26 @@ body {
   gap: 10px;
 }
 
-.editor {
-  font-family: Arial;
-  font-size: 16px;
+.editor-wrapper {
   flex: 1;
+  display: flex;
+  justify-content: center;
+  overflow-y: auto; /* Keep scroll if content overflows */
   padding: 40px;
-  outline: none;
-  overflow-y: scroll;
-  height: 100%;
-  line-height: 1.6;
-  background-color: white;
-  white-space: pre-wrap;
+  background-color: #e5e5e5;
+  min-height: 0; /* Allow flex child to shrink/grow */
 }
 
-/* Make it scroll like a doc */
-.editor::-webkit-scrollbar {
-  width: 10px;
-}
-.editor::-webkit-scrollbar-thumb {
-  background-color: #ccc;
-  border-radius: 5px;
+.editor.a4 {
+  width: 794px;
+  min-height: 0; /* Allow the element to grow naturally */
+  height: auto; /* Ensure it grows with content */
+  background-color: white;
+  padding: 60px;
+  margin: 0 auto;
+  outline: none;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* subtle paper effect */
+  border-radius: 0px; /* no radius for full-page look */
 }
