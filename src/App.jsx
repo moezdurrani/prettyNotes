@@ -5,9 +5,9 @@ import TextStyle from "@tiptap/extension-text-style";
 import Color from "@tiptap/extension-color";
 import FontFamily from "@tiptap/extension-font-family";
 import { Extension } from "@tiptap/core";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-// ✅ FontSize extension that works with TextStyle
+// FontSize extension
 const FontSize = Extension.create({
   name: "fontSize",
   addGlobalAttributes() {
@@ -43,11 +43,45 @@ const FontSize = Extension.create({
 const App = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isPlainBackground, setIsPlainBackground] = useState(false);
+  const [fontFamily, setFontFamily] = useState("Arial");
+  const [fontSize, setFontSize] = useState("16");
+  const [color, setColor] = useState("#000000");
 
   const editor = useEditor({
     extensions: [StarterKit, TextStyle, Color, FontFamily, FontSize],
     content: "<p>Start typing your notes here...</p>",
+    onSelectionUpdate: () => {
+      // Update toolbar state based on the selected text's styles
+      if (editor) {
+        // Font Family
+        const currentFontFamily = editor.isActive("textStyle", {
+          fontFamily: /.+/,
+        })
+          ? editor.getAttributes("textStyle").fontFamily || "Arial"
+          : "Arial";
+        setFontFamily(currentFontFamily);
+
+        // Font Size
+        const currentFontSize = editor.isActive("textStyle", {
+          fontSize: /.+/,
+        })
+          ? editor.getAttributes("textStyle").fontSize || "16"
+          : "16";
+        setFontSize(currentFontSize);
+
+        // Color
+        const currentColor = editor.isActive("textStyle", { color: /.+/ })
+          ? editor.getAttributes("textStyle").color || "#000000"
+          : "#000000";
+        setColor(currentColor);
+      }
+    },
   });
+
+  // Ensure editor is ready before rendering
+  if (!editor) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div
@@ -63,8 +97,11 @@ const App = () => {
 
         <label>Font:</label>
         <select
+          value={fontFamily}
           onChange={(e) => {
-            editor?.chain().focus().setFontFamily(e.target.value).run();
+            const newFontFamily = e.target.value;
+            setFontFamily(newFontFamily);
+            editor.chain().focus().setFontFamily(newFontFamily).run();
           }}
         >
           <option value="Arial">Arial</option>
@@ -76,8 +113,11 @@ const App = () => {
 
         <label>Size:</label>
         <select
+          value={fontSize}
           onChange={(e) => {
-            editor?.chain().focus().setFontSize(e.target.value).run();
+            const newFontSize = e.target.value;
+            setFontSize(newFontSize);
+            editor.chain().focus().setFontSize(newFontSize).run();
           }}
         >
           <option value="14">Small</option>
@@ -89,8 +129,11 @@ const App = () => {
         <label>Color:</label>
         <input
           type="color"
+          value={color}
           onChange={(e) => {
-            editor?.chain().focus().setColor(e.target.value).run();
+            const newColor = e.target.value;
+            setColor(newColor);
+            editor.chain().focus().setColor(newColor).run();
           }}
         />
 
@@ -113,7 +156,7 @@ const App = () => {
 
       <div className={`editor-wrapper ${isCollapsed ? "expanded" : ""}`}>
         <div className="editor a4">
-          {editor ? <EditorContent editor={editor} /> : "Loading..."}
+          <EditorContent editor={editor} />
         </div>
       </div>
     </div>
