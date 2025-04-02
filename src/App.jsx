@@ -7,13 +7,18 @@ const App = () => {
   const [color, setColor] = useState("#000000");
   const [a4View, setA4View] = useState(true);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isPlainBackground, setIsPlainBackground] = useState(false); // Toggles page background
 
   const applyStyle = (command, value) => {
     document.execCommand(command, false, value);
   };
 
   return (
-    <div className="container">
+    <div
+      className={`container ${isCollapsed ? "collapsed" : ""} ${
+        isPlainBackground ? "plain-background" : ""
+      }`}
+    >
       <div className={`toolbar ${isCollapsed ? "collapsed" : ""}`}>
         <button onClick={() => setIsCollapsed(true)} className="hide-button">
           Hide Toolbar
@@ -63,6 +68,16 @@ const App = () => {
             applyStyle("foreColor", e.target.value);
           }}
         />
+
+        {/* Plain Background Checkbox */}
+        <label>
+          <input
+            type="checkbox"
+            checked={isPlainBackground}
+            onChange={(e) => setIsPlainBackground(e.target.checked)}
+          />
+          Plain Background
+        </label>
       </div>
 
       <button
