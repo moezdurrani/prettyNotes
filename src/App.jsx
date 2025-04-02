@@ -1,17 +1,53 @@
 import "./App.css";
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import TextStyle from "@tiptap/extension-text-style";
+import Color from "@tiptap/extension-color";
+import FontFamily from "@tiptap/extension-font-family";
+import { Extension } from "@tiptap/core";
 import { useState } from "react";
 
-const App = () => {
-  const [fontSize, setFontSize] = useState("16px");
-  const [fontFamily, setFontFamily] = useState("Arial");
-  const [color, setColor] = useState("#000000");
-  const [a4View, setA4View] = useState(true);
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isPlainBackground, setIsPlainBackground] = useState(false); // Toggles page background
+// ✅ FontSize extension that works with TextStyle
+const FontSize = Extension.create({
+  name: "fontSize",
+  addGlobalAttributes() {
+    return [
+      {
+        types: ["textStyle"],
+        attributes: {
+          fontSize: {
+            default: null,
+            parseHTML: (element) => element.style.fontSize?.replace("px", ""),
+            renderHTML: (attributes) => {
+              if (!attributes.fontSize) return {};
+              return {
+                style: `font-size: ${attributes.fontSize}px`,
+              };
+            },
+          },
+        },
+      },
+    ];
+  },
+  addCommands() {
+    return {
+      setFontSize:
+        (fontSize) =>
+        ({ chain }) => {
+          return chain().setMark("textStyle", { fontSize }).run();
+        },
+    };
+  },
+});
 
-  const applyStyle = (command, value) => {
-    document.execCommand(command, false, value);
-  };
+const App = () => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isPlainBackground, setIsPlainBackground] = useState(false);
+
+  const editor = useEditor({
+    extensions: [StarterKit, TextStyle, Color, FontFamily, FontSize],
+    content: "<p>Start typing your notes here...</p>",
+  });
 
   return (
     <div
@@ -24,12 +60,11 @@ const App = () => {
           Hide Toolbar
         </button>
         <h3>Style</h3>
+
         <label>Font:</label>
         <select
-          value={fontFamily}
           onChange={(e) => {
-            setFontFamily(e.target.value);
-            applyStyle("fontName", e.target.value);
+            editor?.chain().focus().setFontFamily(e.target.value).run();
           }}
         >
           <option value="Arial">Arial</option>
@@ -41,35 +76,24 @@ const App = () => {
 
         <label>Size:</label>
         <select
-          value={fontSize}
           onChange={(e) => {
-            setFontSize(e.target.value);
-            const sizeMap = {
-              "14px": 2,
-              "16px": 3,
-              "20px": 4,
-              "28px": 5,
-            };
-            applyStyle("fontSize", sizeMap[e.target.value]);
+            editor?.chain().focus().setFontSize(e.target.value).run();
           }}
         >
-          <option value="14px">Small</option>
-          <option value="16px">Medium</option>
-          <option value="20px">Large</option>
-          <option value="28px">XL</option>
+          <option value="14">Small</option>
+          <option value="16">Medium</option>
+          <option value="20">Large</option>
+          <option value="28">XL</option>
         </select>
 
         <label>Color:</label>
         <input
           type="color"
-          value={color}
           onChange={(e) => {
-            setColor(e.target.value);
-            applyStyle("foreColor", e.target.value);
+            editor?.chain().focus().setColor(e.target.value).run();
           }}
         />
 
-        {/* Plain Background Checkbox */}
         <label>
           <input
             type="checkbox"
@@ -88,18 +112,8 @@ const App = () => {
       </button>
 
       <div className={`editor-wrapper ${isCollapsed ? "expanded" : ""}`}>
-        <div
-          className={`editor ${a4View ? "a4" : ""}`}
-          contentEditable
-          suppressContentEditableWarning
-          spellCheck={false}
-          style={{
-            fontSize,
-            fontFamily,
-            color,
-          }}
-        >
-          Start typing your notes here...
+        <div className="editor a4">
+          {editor ? <EditorContent editor={editor} /> : "Loading..."}
         </div>
       </div>
     </div>
