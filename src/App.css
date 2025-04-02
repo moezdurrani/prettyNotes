@@ -4,13 +4,14 @@ body {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   background-color: #ffffff;
   color: #000000;
-  min-height: 100vh; /* Ensure body can grow with content */
+  min-height: 100vh;
 }
 
 .container {
   display: flex;
-  min-height: 100vh; /* Minimum height of viewport, but can grow */
+  min-height: 100vh;
   background-color: #e5e5e5;
+  position: relative;
 }
 
 .toolbar {
@@ -21,28 +22,80 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  overflow-y: auto;
+  transition: transform 0.3s ease;
+  z-index: 10;
+}
+
+.toolbar.collapsed {
+  transform: translateX(-100%);
+}
+
+.hide-button {
+  padding: 10px;
+  background: #ddd;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
+.toolbar-icon {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  width: 40px;
+  height: 40px;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  z-index: 5;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.toolbar-icon.visible {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .editor-wrapper {
   flex: 1;
   display: flex;
   justify-content: center;
-  overflow-y: auto; /* Keep scroll if content overflows */
+  overflow-y: auto;
   padding: 40px;
   background-color: #e5e5e5;
-  min-height: 0; /* Allow flex child to shrink/grow */
+  margin-left: 220px;
+  transition: margin-left 0.3s ease;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.editor-wrapper.expanded {
+  margin-left: 0;
 }
 
 .editor.a4 {
   width: 794px;
-  min-height: 0; /* Allow the element to grow naturally */
-  height: auto; /* Ensure it grows with content */
+  min-height: 0;
+  height: auto;
   background-color: white;
   padding: 60px;
   margin: 0 auto;
   outline: none;
   line-height: 1.6;
   white-space: pre-wrap;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* subtle paper effect */
-  border-radius: 0px; /* no radius for full-page look */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  border-radius: 0px;
 }

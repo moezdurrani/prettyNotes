@@ -6,6 +6,7 @@ const App = () => {
   const [fontFamily, setFontFamily] = useState("Arial");
   const [color, setColor] = useState("#000000");
   const [a4View, setA4View] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const applyStyle = (command, value) => {
     document.execCommand(command, false, value);
@@ -13,7 +14,10 @@ const App = () => {
 
   return (
     <div className="container">
-      <div className="toolbar">
+      <div className={`toolbar ${isCollapsed ? "collapsed" : ""}`}>
+        <button onClick={() => setIsCollapsed(true)} className="hide-button">
+          Hide Toolbar
+        </button>
         <h3>Style</h3>
         <label>Font:</label>
         <select
@@ -61,7 +65,14 @@ const App = () => {
         />
       </div>
 
-      <div className="editor-wrapper">
+      <button
+        className={`toolbar-icon ${isCollapsed ? "visible" : ""}`}
+        onClick={() => setIsCollapsed(false)}
+      >
+        ☰
+      </button>
+
+      <div className={`editor-wrapper ${isCollapsed ? "expanded" : ""}`}>
         <div
           className={`editor ${a4View ? "a4" : ""}`}
           contentEditable
